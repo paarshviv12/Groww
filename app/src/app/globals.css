@@ -412,3 +412,9 @@ button, input { font: inherit; color: inherit; }
 .ap-main, .ap-card, .ap-head { min-width: 0; max-width: 100%; }
 .ap-nav { min-width: 0; }
 .ap-facts dd { min-width: 0; }
+
+/* "Run a payment" section: purple backdrop so the white cheque, receipt tape and control panel stand out */
+.try { background: #6a3df0; color: #ffffff; border-color: #0a0a0a; }
+.try > h2, .try > .lead { color: #ffffff; }
+.try .controls, .try .cheque, .try .tape-shell { color: var(--ink); }
+.try .pill.white { color: var(--ink); }
