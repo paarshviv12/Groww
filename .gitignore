@@ -1,0 +1,9 @@
+node_modules
+.next
+.env*
+!.env.example
+chain/artifacts
+chain/cache
+chain/typechain-types
+app/tsconfig.tsbuildinfo
+*.log

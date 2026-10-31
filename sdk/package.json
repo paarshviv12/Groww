@@ -1,0 +1,11 @@
+{
+  "name": "groww-sdk",
+  "version": "1.0.0",
+  "description": "Pay and create GROWW carts from code. An agent signs once; the contract settles it on HashKey Chain.",
+  "type": "module",
+  "main": "index.mjs",
+  "bin": { "groww": "cli.mjs" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "viem": "^2.21.0" },
+  "license": "MIT"
+}
