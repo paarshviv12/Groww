@@ -141,7 +141,9 @@ async function runInner(
     }
     return { ok: true, cartHash, txHash: paid.txHash, delivery };
   } catch (e) {
-    const msg = (e as Error).message;
+    const err = e as Error & { cause?: { code?: string; message?: string } };
+    const why = err.cause?.code || err.cause?.message;
+    const msg = why ? `${err.message} (${why})` : err.message;
     tracer.emit({ actor: "payer", status: "fail", hspState: "payment-failed", title: "Flow stopped", detail: msg });
     return { ok: false, error: msg };
   }

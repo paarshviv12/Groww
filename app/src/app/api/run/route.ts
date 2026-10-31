@@ -1,4 +1,4 @@
-import { HttpMerchantClient } from "@/lib/agents/merchant";
+import { InProcessMerchantClient, merchantConfigFromEnv } from "@/lib/agents/merchant";
 import { payerConfigFromEnv, runPaymentFlow } from "@/lib/agents/payer";
 import { runTamperDemo } from "@/lib/agents/attacks";
 import { jsonSafe } from "@/lib/chain";
@@ -14,9 +14,6 @@ export async function POST(req: Request) {
     return Response.json({ error: "Live runs on this deployment need the demo key. Replay a recorded run instead." }, { status: 401 });
   }
   const body = (await req.json().catch(() => ({}))) as { mode?: "pay" | "tamper"; serviceId?: string; target?: string };
-  // The demo merchant is this same server. On a host like Render the public URL is behind a proxy,
-  // so call ourselves on the local port instead of whatever origin the request reports.
-  const origin = process.env.PORT ? `http://127.0.0.1:${process.env.PORT}` : new URL(req.url).origin;
   const enc = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
@@ -24,7 +21,8 @@ export async function POST(req: Request) {
       try {
         const cfg = payerConfigFromEnv();
         const tracer = new Tracer((event) => send({ type: "event", event }));
-        const merchant = new HttpMerchantClient(origin);
+        // The demo merchant lives in this same server, so call it directly (no network hop).
+        const merchant = new InProcessMerchantClient(merchantConfigFromEnv());
         const summary = body.mode === "tamper"
           ? await runTamperDemo(cfg, merchant, tracer)
           : await runPaymentFlow(cfg, merchant, { serviceId: body.serviceId ?? "wallet-snapshot", target: body.target }, tracer);
